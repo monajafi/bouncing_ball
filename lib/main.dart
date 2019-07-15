@@ -46,21 +46,19 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    double screenRight = widget.screenSize.width / 2 - 90;
-    double screenBottom = widget.screenSize.height / 2 - 90;
+    double screenRight = widget.screenSize.width / 2 - 100;
+    double screenBottom = widget.screenSize.height / 2 - 100;
     const twentyMillis = const Duration(milliseconds: 1000 ~/ 60);
-    timer = Timer(twentyMillis, () {
+    timer = Timer.periodic(twentyMillis, (timer) {
       setState(() {
-        dx += 2;
-        dy += 2;
-        // if (dx > screenRight || dx < -screenRight) {
-        //   dx -= 2;
-        // } else if (dy > screenBottom || dy < -screenBottom) {
-        //   dy -= 2;
-        // } else {
-        //   dx += 2;
-        //   dy += 2;
-        // }
+        if (dx > screenRight || dx < -screenRight) {
+          dx -= 2;
+        } else if (dy > screenBottom || dy < -screenBottom) {
+          dy -= 2;
+        } else {
+          dx += 2;
+          dy += 2;
+        }
       });
     });
   }
