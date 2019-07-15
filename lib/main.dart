@@ -1,50 +1,92 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-void main() => runApp(BouncingBallApp());
+void main() => runApp(MyApp());
 
-class BouncingBallApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _BouncingBallAppState createState() => _BouncingBallAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "Bouncing Ball",
+        home: BouncingBall());
+  }
 }
 
-class _BouncingBallAppState extends State<BouncingBallApp> with TickerProviderStateMixin {
-  AnimationController controller;
-  Animation<Point> animation;
+class BouncingBall extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Bouncing Ball"),
+      ),
+      body: GameScreen(
+        screenSize: screenSize,
+      ),
+    );
+  }
+}
+
+class GameScreen extends StatefulWidget {
+  final Size screenSize;
+  GameScreen({Key key, @required this.screenSize}) : super(key: key);
+
+  @override
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  bool _shouldMove = false;
+  double dx = 2;
+  double dy = 2;
+  Timer timer;
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(duration: const Duration(seconds: 5),vsync: this);
-    animation = Tween<Point>(begin: Point(0, 0),end: Point(200, 200)).animate(controller)
-                ..addStatusListener((status){
-                  if(status == )
-                });
-    controller.forward();
+    double screenRight = widget.screenSize.width / 2 - 90;
+    double screenBottom = widget.screenSize.height / 2 - 90;
+    const twentyMillis = const Duration(milliseconds: 1000 ~/ 60);
+    timer = Timer(twentyMillis, () {
+      setState(() {
+        dx += 2;
+        dy += 2;
+        // if (dx > screenRight || dx < -screenRight) {
+        //   dx -= 2;
+        // } else if (dy > screenBottom || dy < -screenBottom) {
+        //   dy -= 2;
+        // } else {
+        //   dx += 2;
+        //   dy += 2;
+        // }
+      });
+    });
   }
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBall(animation: animation,);
-  }
-}
 
-class AnimatedBall extends AnimatedWidget{
-  AnimatedBall({Key key,Animation animation}):
-              super(key:key,listenable:animation);
+  void _moveBall() {
+    _shouldMove = !_shouldMove;
+    if (!_shouldMove) {
+      timer.cancel();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Animation<Point> animation = listenable;
     return Center(
-      child: Transform.translate(
-        offset:  Offset(animation.value.x.toDouble(), animation.value.y.toDouble()),
-        child: Container(
-          width: 100,
-          height: 100,
-          decoration:
-              BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+      child: GestureDetector(
+        onTap: _moveBall,
+        child: Transform.translate(
+          offset: Offset(dx, dy),
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration:
+                BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+          ),
         ),
       ),
-    );;
+    );
   }
-
 }
