@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -20,9 +19,7 @@ class BouncingBall extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Bouncing Ball"),
-      ),
+      appBar: null,
       body: GameScreen(
         screenSize: screenSize,
       ),
@@ -40,32 +37,37 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   bool _shouldMove = false;
+  double xStep = 2;
+  double yStep = 2;
   double dx = 2;
   double dy = 2;
   Timer timer;
   @override
   void initState() {
     super.initState();
-    double screenRight = widget.screenSize.width / 2 - 100;
-    double screenBottom = widget.screenSize.height / 2 - 100;
-    const twentyMillis = const Duration(milliseconds: 1000 ~/ 60);
-    timer = Timer.periodic(twentyMillis, (timer) {
-      setState(() {
-        if (dx > screenRight || dx < -screenRight) {
-          dx -= 2;
-        } else if (dy > screenBottom || dy < -screenBottom) {
-          dy -= 2;
-        } else {
-          dx += 2;
-          dy += 2;
-        }
-      });
-    });
   }
 
   void _moveBall() {
     _shouldMove = !_shouldMove;
-    if (!_shouldMove) {
+    if (_shouldMove) {
+      double screenRight = widget.screenSize.width / 2 - 50;
+      double screenBottom = widget.screenSize.height / 2 - 50;
+      const twentyMillis = const Duration(milliseconds: 1000 ~/ 60);
+      timer = Timer.periodic(twentyMillis, (timer) {
+        setState(() {
+          if (dx > screenRight || dx < -screenRight) {
+            xStep = -xStep;
+            dx += xStep;
+          } else if (dy > screenBottom || dy < -screenBottom) {
+            yStep = -yStep;
+            dy += yStep;
+          } else {
+            dx += xStep;
+            dy += yStep;
+          }
+        });
+      });
+    } else {
       timer.cancel();
     }
   }
@@ -73,10 +75,10 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: GestureDetector(
-        onTap: _moveBall,
-        child: Transform.translate(
-          offset: Offset(dx, dy),
+      child: Transform.translate(
+        offset: Offset(dx, dy),
+        child: GestureDetector(
+          onTap: _moveBall,
           child: Container(
             width: 100,
             height: 100,
