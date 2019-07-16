@@ -42,10 +42,6 @@ class _GameScreenState extends State<GameScreen> {
   double dx = 2;
   double dy = 2;
   Timer timer;
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _moveBall() {
     _shouldMove = !_shouldMove;
